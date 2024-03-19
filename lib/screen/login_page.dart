@@ -1,6 +1,4 @@
-import 'package:flutter/material.dart';
-import 'package:salud_eficiente/main.dart';
-import 'package:salud_eficiente/screen/register.dart';
+import 'package:salud_eficiente/screen/screens.dart';
 
 class LoginPage extends StatelessWidget {
   const LoginPage({Key? key}) : super(key: key);

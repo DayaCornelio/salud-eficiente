@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({Key? key}) : super(key: key);
@@ -9,15 +10,15 @@ class ProfilePage extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Editar Perfil'),
       ),
+      backgroundColor:
+          Color.fromARGB(255, 183, 218, 235), // Color de fondo beige
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             ElevatedButton(
-              onPressed: () {
-                // Add functionality to handle photo upload
-              },
+              onPressed: () {},
               child: const Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -34,19 +35,49 @@ class ProfilePage extends StatelessWidget {
             ),
             const SizedBox(height: 3.0),
             TextFormField(
-              maxLines: 5,
+              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+              maxLength: 2,
+              keyboardType: TextInputType.number,
               decoration: const InputDecoration(
                 labelText: 'Edad',
               ),
             ),
             const SizedBox(height: 5.0),
-            TextFormField(
-              maxLines: 5,
+            DropdownButtonFormField<String>(
               decoration: const InputDecoration(
-                labelText: 'Agregar peso',
+                labelText: 'Agregar peso (kg)',
               ),
+              items: <String>[
+                '30-40 kg',
+                '40-50 kg',
+                '50-60 kg',
+                '60-70 kg',
+                '70-80 kg',
+                '80-90 kg',
+                '90-100 kg',
+                '100-110 kg',
+                // Agrega más opciones según sea necesario
+              ].map((String value) {
+                return DropdownMenuItem<String>(
+                  value: value,
+                  child: Text(value),
+                );
+              }).toList(),
+              onChanged: (String? newValue) {
+                // Add functionality when a weight option is selected
+              },
             ),
             const SizedBox(height: 16.0),
+            ElevatedButton(
+              onPressed: () {
+                // Add functionality to save changes
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color.fromARGB(
+                    255, 30, 226, 233), // Color de fondo rosa
+              ),
+              child: const Text('Guardar Cambios'),
+            ),
           ],
         ),
       ),

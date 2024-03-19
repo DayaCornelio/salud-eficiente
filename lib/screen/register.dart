@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:salud_eficiente/main.dart';
+import 'package:salud_eficiente/screen/home_page.dart';
 
 class RegisterPage extends StatelessWidget {
   const RegisterPage({Key? key}) : super(key: key);
