@@ -10,7 +10,7 @@ class Dermatologia extends StatelessWidget {
         title: const Text('Dermatología'),
       ),
       body: ListView.builder(
-        itemCount: 3,
+        itemCount: profiles.length,
         itemBuilder: (BuildContext context, int index) {
           return GestureDetector(
             onTap: () {
@@ -46,16 +46,97 @@ class Dermatologia extends StatelessWidget {
   }
 }
 
-class ProfileDetails extends StatelessWidget {
+class ProfileDetails extends StatefulWidget {
   final Map<String, String> profile;
 
   const ProfileDetails({required this.profile, Key? key}) : super(key: key);
 
   @override
+  _ProfileDetailsState createState() => _ProfileDetailsState();
+}
+
+class _ProfileDetailsState extends State<ProfileDetails> {
+  DateTime? _selectedDate;
+  TimeOfDay? _selectedTime;
+
+  void _selectDate(BuildContext context) async {
+    final DateTime? pickedDate = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime.now(),
+      lastDate: DateTime(DateTime.now().year + 1),
+    );
+
+    if (pickedDate != null && pickedDate != _selectedDate) {
+      setState(() {
+        _selectedDate = pickedDate;
+      });
+    }
+  }
+
+  void _selectTime(BuildContext context) async {
+    final TimeOfDay? pickedTime = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay.now(),
+    );
+
+    if (pickedTime != null && pickedTime != _selectedTime) {
+      setState(() {
+        _selectedTime = pickedTime;
+      });
+    }
+  }
+
+  void _scheduleAppointment(BuildContext context) {
+    if (_selectedDate == null || _selectedTime == null) {
+      // Ensure date and time are selected
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('Error'),
+            content:
+                const Text('Por favor, seleccione fecha y hora para la cita.'),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: const Text('Aceptar'),
+              ),
+            ],
+          );
+        },
+      );
+    } else {
+      // Implement your appointment scheduling logic here
+      // For example, you can show a dialog box confirming the appointment
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('Cita Agendada'),
+            content: Text(
+                'Su cita con ${widget.profile['name']} el ${_selectedDate!.day}/${_selectedDate!.month}/${_selectedDate!.year} a las ${_selectedTime!.hour}:${_selectedTime!.minute} ha sido agendada con éxito.'),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: const Text('Aceptar'),
+              ),
+            ],
+          );
+        },
+      );
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(profile['name']!),
+        title: Text(widget.profile['name']!),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -63,12 +144,30 @@ class ProfileDetails extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text('Información del doctor:'),
-            Text(profile['info']!),
+            Text(widget.profile['info']!),
             const Text('Ubicación:'),
-            Text(profile['location']!),
+            Text(widget.profile['location']!),
             const SizedBox(height: 20),
-            const Text('Agendar cita:'),
-            // Agregar Formulario de citas//pendienteeeeeee.......
+            ElevatedButton(
+              onPressed: () {
+                _selectDate(context);
+              },
+              child: const Text('Seleccionar fecha'),
+            ),
+            const SizedBox(height: 10),
+            ElevatedButton(
+              onPressed: () {
+                _selectTime(context);
+              },
+              child: const Text('Seleccionar hora'),
+            ),
+            const SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () {
+                _scheduleAppointment(context);
+              },
+              child: const Text('Visualizar Cita'),
+            ),
           ],
         ),
       ),

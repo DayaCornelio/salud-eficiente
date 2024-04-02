@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "639527766832",
+    "project_id": "salud-3e2f6",
+    "storage_bucket": "salud-3e2f6.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:639527766832:android:81dd729556944732b896f5",
+        "android_client_info": {
+          "package_name": "com.example.salud_eficiente"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDJa6rrL5ZnUuTAl1iux99m-ltS7-c5g1c"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
