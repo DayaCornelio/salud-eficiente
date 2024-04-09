@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:salud_eficiente/screen/home_page.dart';
+import 'package:salud_eficiente/screen/login_page.dart';
 
 class RegisterPage extends StatelessWidget {
   const RegisterPage({Key? key}) : super(key: key);
@@ -10,30 +11,55 @@ class RegisterPage extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Registro'),
       ),
-      body: Container(
-        margin: const EdgeInsets.all(16.0),
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              const TextField(
-                decoration: InputDecoration(hintText: 'Email'),
-              ),
-              const TextField(
-                decoration: InputDecoration(hintText: 'Contraseña'),
-                obscureText: true,
-              ),
-              ElevatedButton(
-                onPressed: () {
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            TextFormField(
+              decoration: const InputDecoration(labelText: 'Email'),
+              keyboardType: TextInputType.emailAddress,
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Por favor ingresa tu correo electrónico';
+                }
+                return null;
+              },
+            ),
+            const SizedBox(height: 20),
+            TextFormField(
+              decoration: const InputDecoration(labelText: 'Contraseña'),
+              obscureText: true,
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Por favor ingresa tu contraseña';
+                }
+                return null;
+              },
+            ),
+            const SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () {
+                if (Form.of(context)!.validate()) {
                   Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(builder: (context) => const HomePage()),
                   );
-                },
-                child: const Text('Registrate'),
-              ),
-            ],
-          ),
+                }
+              },
+              child: const Text('Registrarse'),
+            ),
+            const SizedBox(height: 10),
+            TextButton(
+              onPressed: () {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => const LoginPage()),
+                );
+              },
+              child: const Text('Ya tienes una cuenta? Inicia sesión'),
+            ),
+          ],
         ),
       ),
     );

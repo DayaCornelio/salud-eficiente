@@ -38,7 +38,7 @@ class Dermatologia extends StatelessWidget {
           children: [
             Text(profiles[index]['info']!),
             Text(profiles[index]['location']!),
-            const SizedBox(height: 10),
+            const SizedBox(height: 40),
           ],
         ),
       ),
@@ -52,12 +52,15 @@ class ProfileDetails extends StatefulWidget {
   const ProfileDetails({required this.profile, Key? key}) : super(key: key);
 
   @override
+  // ignore: library_private_types_in_public_api
   _ProfileDetailsState createState() => _ProfileDetailsState();
 }
 
 class _ProfileDetailsState extends State<ProfileDetails> {
   DateTime? _selectedDate;
   TimeOfDay? _selectedTime;
+  int _rating = 0;
+  final TextEditingController _commentController = TextEditingController();
 
   void _selectDate(BuildContext context) async {
     final DateTime? pickedDate = await showDatePicker(
@@ -75,9 +78,28 @@ class _ProfileDetailsState extends State<ProfileDetails> {
   }
 
   void _selectTime(BuildContext context) async {
-    final TimeOfDay? pickedTime = await showTimePicker(
+    final TimeOfDay? pickedTime = await showDialog<TimeOfDay>(
       context: context,
-      initialTime: TimeOfDay.now(),
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Seleccionar Hora'),
+          content: SingleChildScrollView(
+            child: Column(
+              children: [
+                for (int hour = 10; hour <= 18; hour++)
+                  for (int minute = 0; minute < 60; minute += 30)
+                    ListTile(
+                      title: Text('$hour:${minute.toString().padLeft(2, '0')}'),
+                      onTap: () {
+                        Navigator.of(context)
+                            .pop(TimeOfDay(hour: hour, minute: minute));
+                      },
+                    ),
+              ],
+            ),
+          ),
+        );
+      },
     );
 
     if (pickedTime != null && pickedTime != _selectedTime) {
@@ -87,16 +109,23 @@ class _ProfileDetailsState extends State<ProfileDetails> {
     }
   }
 
-  void _scheduleAppointment(BuildContext context) {
-    if (_selectedDate == null || _selectedTime == null) {
-      // Ensure date and time are selected
+  void _sendFeedback(BuildContext context) {
+    final String comment = _commentController.text;
+    if (comment.isNotEmpty && _rating > 0) {
       showDialog(
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: const Text('Error'),
-            content:
-                const Text('Por favor, seleccione fecha y hora para la cita.'),
+            title: const Text('Servicio y comentario enviado'),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('Calificación: $_rating estrellas'),
+                const SizedBox(height: 10),
+                Text('Comentario: $comment'),
+              ],
+            ),
             actions: [
               TextButton(
                 onPressed: () {
@@ -109,15 +138,14 @@ class _ProfileDetailsState extends State<ProfileDetails> {
         },
       );
     } else {
-      // Implement your appointment scheduling logic here
-      // For example, you can show a dialog box confirming the appointment
+      // Alerta de error
       showDialog(
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: const Text('Cita Agendada'),
-            content: Text(
-                'Su cita con ${widget.profile['name']} el ${_selectedDate!.day}/${_selectedDate!.month}/${_selectedDate!.year} a las ${_selectedTime!.hour}:${_selectedTime!.minute} ha sido agendada con éxito.'),
+            title: const Text('Error'),
+            content: const Text(
+                'Por favor, proporcione una calificación y un comentario antes de enviar.'),
             actions: [
               TextButton(
                 onPressed: () {
@@ -132,13 +160,41 @@ class _ProfileDetailsState extends State<ProfileDetails> {
     }
   }
 
+  void _viewAppointment(BuildContext context) {
+    String appointmentInfo = "No hay cita agendada";
+    if (_selectedDate != null && _selectedTime != null) {
+      appointmentInfo =
+          "Fecha de cita: ${_selectedDate!.day}/${_selectedDate!.month}/${_selectedDate!.year}\n";
+      appointmentInfo +=
+          "Hora de cita: ${_selectedTime!.hour}:${_selectedTime!.minute}";
+    }
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Cita Agendada'),
+          content: Text(appointmentInfo),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('Aceptar'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.profile['name']!),
       ),
-      body: Padding(
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -161,12 +217,74 @@ class _ProfileDetailsState extends State<ProfileDetails> {
               },
               child: const Text('Seleccionar hora'),
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 10),
             ElevatedButton(
               onPressed: () {
-                _scheduleAppointment(context);
+                _viewAppointment(context);
               },
-              child: const Text('Visualizar Cita'),
+              child: const Text('Ver cita agendada'),
+            ),
+            const SizedBox(height: 80),
+            Row(
+              children: [
+                const Text('Calificar servicio: '),
+                IconButton(
+                  onPressed: () {
+                    setState(() {
+                      _rating = 1;
+                    });
+                  },
+                  icon: Icon(_rating >= 1 ? Icons.star : Icons.star_border),
+                ),
+                IconButton(
+                  onPressed: () {
+                    setState(() {
+                      _rating = 2;
+                    });
+                  },
+                  icon: Icon(_rating >= 2 ? Icons.star : Icons.star_border),
+                ),
+                IconButton(
+                  onPressed: () {
+                    setState(() {
+                      _rating = 3;
+                    });
+                  },
+                  icon: Icon(_rating >= 3 ? Icons.star : Icons.star_border),
+                ),
+                IconButton(
+                  onPressed: () {
+                    setState(() {
+                      _rating = 4;
+                    });
+                  },
+                  icon: Icon(_rating >= 4 ? Icons.star : Icons.star_border),
+                ),
+                IconButton(
+                  onPressed: () {
+                    setState(() {
+                      _rating = 5;
+                    });
+                  },
+                  icon: Icon(_rating >= 5 ? Icons.star : Icons.star_border),
+                ),
+              ],
+            ),
+            const SizedBox(height: 20),
+            TextField(
+              controller: _commentController,
+              decoration: const InputDecoration(
+                labelText: 'Deje su comentario',
+                border: OutlineInputBorder(),
+              ),
+              maxLines: 3,
+            ),
+            const SizedBox(height: 10),
+            ElevatedButton(
+              onPressed: () {
+                _sendFeedback(context);
+              },
+              child: const Text('Enviar'),
             ),
           ],
         ),
