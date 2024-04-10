@@ -11,6 +11,7 @@ class HomePage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Salud Eficiente'),
+        backgroundColor: Color.fromARGB(255, 120, 188, 224),
         actions: [
           IconButton(
             onPressed: () {
@@ -23,6 +24,7 @@ class HomePage extends StatelessWidget {
           ),
         ],
       ),
+      backgroundColor: Color.fromARGB(255, 217, 231, 240),
       body: Container(
         margin: const EdgeInsets.all(16.0),
         child: Column(
@@ -70,7 +72,7 @@ class HomePage extends StatelessWidget {
             label: 'Perfil',
           ),
         ],
-        selectedItemColor: Colors.blue,
+        selectedItemColor: Color.fromARGB(255, 157, 203, 238),
         onTap: (int index) {
           if (index == 0) {
             // Navegar a la página de inicio si se presiona "Inicio"

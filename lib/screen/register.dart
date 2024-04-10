@@ -10,6 +10,7 @@ class RegisterPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Registro'),
+        backgroundColor: Color.fromARGB(255, 197, 61, 152),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -17,7 +18,17 @@ class RegisterPage extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             TextFormField(
-              decoration: const InputDecoration(labelText: 'Email'),
+              decoration: const InputDecoration(labelText: 'Ingresa tu nombre'),
+              keyboardType: TextInputType.emailAddress,
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Por favor ingresa tu nombre';
+                }
+                return null;
+              },
+            ),
+            TextFormField(
+              decoration: const InputDecoration(labelText: 'Ingresa Email'),
               keyboardType: TextInputType.emailAddress,
               validator: (value) {
                 if (value == null || value.isEmpty) {
@@ -28,7 +39,8 @@ class RegisterPage extends StatelessWidget {
             ),
             const SizedBox(height: 20),
             TextFormField(
-              decoration: const InputDecoration(labelText: 'Contraseña'),
+              decoration:
+                  const InputDecoration(labelText: 'Ingresa Contraseña'),
               obscureText: true,
               validator: (value) {
                 if (value == null || value.isEmpty) {
@@ -40,12 +52,10 @@ class RegisterPage extends StatelessWidget {
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
-                if (Form.of(context)!.validate()) {
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(builder: (context) => const HomePage()),
-                  );
-                }
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => const HomePage()),
+                );
               },
               child: const Text('Registrarse'),
             ),

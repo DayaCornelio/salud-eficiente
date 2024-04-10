@@ -8,6 +8,7 @@ class Odontologia extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Odontologia'),
+        backgroundColor: Color.fromARGB(255, 189, 190, 190),
       ),
       body: ListView.builder(
         itemCount: profiles.length,
@@ -193,6 +194,7 @@ class _ProfileDetailsState extends State<ProfileDetails> {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.profile['name']!),
+        backgroundColor: Color.fromARGB(255, 197, 61, 152),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),

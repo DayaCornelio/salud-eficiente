@@ -8,10 +8,10 @@ class ProfilePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Editar Perfil'),
+        backgroundColor: const Color.fromARGB(255, 48, 209, 209),
+        title: const Text('Perfil medico'),
       ),
-      backgroundColor:
-          Color.fromARGB(255, 183, 218, 235), // Color de fondo beige
+      backgroundColor: const Color.fromARGB(255, 232, 248, 255),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -70,11 +70,16 @@ class ProfilePage extends StatelessWidget {
             const SizedBox(height: 16.0),
             ElevatedButton(
               onPressed: () {
-                // Add functionality to save changes
+                // Muestra una notificación cuando se presiona el botón "Guardar Cambios"
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('¡Guardado con éxito!'),
+                  ),
+                );
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color.fromARGB(
-                    255, 30, 226, 233), // Color de fondo rosa
+                    255, 214, 231, 231), // Color de fondo rosa
               ),
               child: const Text('Guardar Cambios'),
             ),
