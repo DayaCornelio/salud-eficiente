@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:salud_eficiente/services/firebase_service_2.dart';
-import 'package:salud_eficiente/services/firebase_service_3.dart';
 
 class Odontologia extends StatelessWidget {
   const Odontologia({Key? key}) : super(key: key);
@@ -9,7 +8,7 @@ class Odontologia extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Dermatología'),
+        title: const Text('Odontología'),
         backgroundColor: const Color.fromARGB(255, 189, 190, 190),
         actions: [
           IconButton(

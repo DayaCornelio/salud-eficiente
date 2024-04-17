@@ -8,7 +8,7 @@ class Medico extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Dermatología'),
+        title: const Text('Medico'),
         backgroundColor: const Color.fromARGB(255, 189, 190, 190),
         actions: [
           IconButton(
