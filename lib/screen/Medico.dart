@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:salud_eficiente/services/firebase_service_3.dart';
 
 class Medico extends StatelessWidget {
   const Medico({Key? key}) : super(key: key);
@@ -7,8 +8,19 @@ class Medico extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Medico'),
-        backgroundColor: Color.fromARGB(255, 189, 190, 190),
+        title: const Text('Dermatología'),
+        backgroundColor: const Color.fromARGB(255, 189, 190, 190),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.calendar_today),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const CitasAgendadas()),
+              );
+            },
+          ),
+        ],
       ),
       body: ListView.builder(
         itemCount: profiles.length,
@@ -58,143 +70,17 @@ class ProfileDetails extends StatefulWidget {
 }
 
 class _ProfileDetailsState extends State<ProfileDetails> {
-  DateTime? _selectedDate;
-  TimeOfDay? _selectedTime;
-  int _rating = 0;
+  final TextEditingController _ratingController = TextEditingController();
   final TextEditingController _commentController = TextEditingController();
-
-  void _selectDate(BuildContext context) async {
-    final DateTime? pickedDate = await showDatePicker(
-      context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime.now(),
-      lastDate: DateTime(DateTime.now().year + 1),
-    );
-
-    if (pickedDate != null && pickedDate != _selectedDate) {
-      setState(() {
-        _selectedDate = pickedDate;
-      });
-    }
-  }
-
-  void _selectTime(BuildContext context) async {
-    final TimeOfDay? pickedTime = await showDialog<TimeOfDay>(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Seleccionar Hora'),
-          content: SingleChildScrollView(
-            child: Column(
-              children: [
-                for (int hour = 10; hour <= 18; hour++)
-                  for (int minute = 0; minute < 60; minute += 30)
-                    ListTile(
-                      title: Text('$hour:${minute.toString().padLeft(2, '0')}'),
-                      onTap: () {
-                        Navigator.of(context)
-                            .pop(TimeOfDay(hour: hour, minute: minute));
-                      },
-                    ),
-              ],
-            ),
-          ),
-        );
-      },
-    );
-
-    if (pickedTime != null && pickedTime != _selectedTime) {
-      setState(() {
-        _selectedTime = pickedTime;
-      });
-    }
-  }
-
-  void _sendFeedback(BuildContext context) {
-    final String comment = _commentController.text;
-    if (comment.isNotEmpty && _rating > 0) {
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: const Text('Servicio y comentario enviado'),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('Calificación: $_rating estrellas'),
-                const SizedBox(height: 10),
-                Text('Comentario: $comment'),
-              ],
-            ),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                child: const Text('Aceptar'),
-              ),
-            ],
-          );
-        },
-      );
-    } else {
-      // Alerta de error
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: const Text('Error'),
-            content: const Text(
-                'Por favor, proporcione una calificación y un comentario antes de enviar.'),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                child: const Text('Aceptar'),
-              ),
-            ],
-          );
-        },
-      );
-    }
-  }
-
-  void _viewAppointment(BuildContext context) {
-    String appointmentInfo = "No hay cita agendada";
-    if (_selectedDate != null && _selectedTime != null) {
-      appointmentInfo =
-          "Fecha de cita: ${_selectedDate!.day}/${_selectedDate!.month}/${_selectedDate!.year}\n";
-      appointmentInfo +=
-          "Hora de cita: ${_selectedTime!.hour}:${_selectedTime!.minute}";
-    }
-
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Cita Agendada'),
-          content: Text(appointmentInfo),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: const Text('Aceptar'),
-            ),
-          ],
-        );
-      },
-    );
-  }
+  final TextEditingController _dateController = TextEditingController();
+  final TextEditingController _timeController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.profile['name']!),
-        backgroundColor: Color.fromARGB(255, 197, 61, 152),
+        backgroundColor: const Color.fromARGB(255, 197, 61, 152),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
@@ -206,71 +92,12 @@ class _ProfileDetailsState extends State<ProfileDetails> {
             const Text('Ubicación:'),
             Text(widget.profile['location']!),
             const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {
-                _selectDate(context);
-              },
-              child: const Text('Seleccionar fecha'),
-            ),
-            const SizedBox(height: 10),
-            ElevatedButton(
-              onPressed: () {
-                _selectTime(context);
-              },
-              child: const Text('Seleccionar hora'),
-            ),
-            const SizedBox(height: 10),
-            ElevatedButton(
-              onPressed: () {
-                _viewAppointment(context);
-              },
-              child: const Text('Ver cita agendada'),
-            ),
-            const SizedBox(height: 80),
-            Row(
-              children: [
-                const Text('Calificar servicio: '),
-                IconButton(
-                  onPressed: () {
-                    setState(() {
-                      _rating = 1;
-                    });
-                  },
-                  icon: Icon(_rating >= 1 ? Icons.star : Icons.star_border),
-                ),
-                IconButton(
-                  onPressed: () {
-                    setState(() {
-                      _rating = 2;
-                    });
-                  },
-                  icon: Icon(_rating >= 2 ? Icons.star : Icons.star_border),
-                ),
-                IconButton(
-                  onPressed: () {
-                    setState(() {
-                      _rating = 3;
-                    });
-                  },
-                  icon: Icon(_rating >= 3 ? Icons.star : Icons.star_border),
-                ),
-                IconButton(
-                  onPressed: () {
-                    setState(() {
-                      _rating = 4;
-                    });
-                  },
-                  icon: Icon(_rating >= 4 ? Icons.star : Icons.star_border),
-                ),
-                IconButton(
-                  onPressed: () {
-                    setState(() {
-                      _rating = 5;
-                    });
-                  },
-                  icon: Icon(_rating >= 5 ? Icons.star : Icons.star_border),
-                ),
-              ],
+            TextField(
+              controller: _ratingController,
+              decoration: const InputDecoration(
+                labelText: 'Calificar servicio',
+                border: OutlineInputBorder(),
+              ),
             ),
             const SizedBox(height: 20),
             TextField(
@@ -281,15 +108,95 @@ class _ProfileDetailsState extends State<ProfileDetails> {
               ),
               maxLines: 3,
             ),
+            const SizedBox(height: 20),
+            TextField(
+              controller: _dateController,
+              decoration: const InputDecoration(
+                labelText: 'Fecha (DD/MM/AAAA)',
+                border: OutlineInputBorder(),
+              ),
+            ),
+            const SizedBox(height: 20),
+            TextField(
+              controller: _timeController,
+              decoration: const InputDecoration(
+                labelText: 'Hora (HH:MM)',
+                border: OutlineInputBorder(),
+              ),
+            ),
             const SizedBox(height: 10),
             ElevatedButton(
-              onPressed: () {
-                _sendFeedback(context);
+              onPressed: () async {
+                await addMedico(
+                  _ratingController.text,
+                  _commentController.text,
+                  _dateController.text,
+                  _timeController.text,
+                );
               },
               child: const Text('Enviar'),
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class CitasAgendadas extends StatelessWidget {
+  // ignore: use_key_in_widget_constructors
+  const CitasAgendadas({Key? key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Citas Agendadas'),
+        backgroundColor: const Color.fromARGB(255, 189, 190, 190),
+      ),
+      body: FutureBuilder<List>(
+        future: getMedico(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return Center(child: Text('Error: ${snapshot.error}'));
+          } else {
+            List? data = snapshot.data;
+            return ListView.builder(
+              itemCount: data?.length,
+              itemBuilder: (_, index) => Card(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    TitleSection(title: data?[index]['Calificacion']),
+                    TitleSection(title: data?[index]['Comentario']),
+                    TitleSection(title: data?[index]['Fecha']),
+                    TitleSection(title: data?[index]['Hora']),
+                  ],
+                ),
+              ),
+            );
+          }
+        },
+      ),
+    );
+  }
+}
+
+class TitleSection extends StatelessWidget {
+  const TitleSection({super.key, required this.title});
+
+  final String title;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(10.0, 5.0, 10.0, 5.0),
+      child: Text(
+        title,
+        style: Theme.of(context).textTheme.titleLarge,
       ),
     );
   }
